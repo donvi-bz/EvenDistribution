@@ -41,7 +41,7 @@ public class test {
         FileWriter randPointDataFileWriter = new FileWriter(randPointDataFile);
 
         for (int i = 0; i < 40000; i++) {
-            int[] randomCord = getRandXyCircle(radiusMax, radiusMin,6,.5);
+            double[] randomCord = getRandXyCircle(radiusMax, radiusMin,6,.5);
             randPointDataFileWriter.write(randomCord[0] + " " + randomCord[1] + '\n');
         }
 

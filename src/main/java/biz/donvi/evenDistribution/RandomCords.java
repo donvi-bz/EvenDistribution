@@ -27,6 +27,16 @@ public class RandomCords {
         return randG;
     }
 
+    /**
+     * Turns a double array of length 2 into an int array of length 2.
+     * @param cordPair A pair of doubles (in an array)
+     * @return A pair of ints (in an array)
+     */
+    static int[] as2wIntArray(double[] cordPair) {
+        return new int[]{
+            (int) cordPair[0],
+            (int) cordPair[1]};
+    }
 
     /**
      * Returns an int array of length 2, representing a random coordinate pair that is both inside the square
@@ -39,16 +49,13 @@ public class RandomCords {
      * @param radiusMin The minimum that {@code |x|} or {@code |y|} will be.
      * @return A pair of numbers, each randomly generated, that satisfy the above conditions.
      */
-    public static int[] getRandXySquare(int radiusMax, int radiusMin) {
+    public static double[] getRandXySquare(int radiusMax, int radiusMin) {
         double[] randPairAtSize = new double[]{
             random() * (radiusMax - radiusMin) + radiusMin,
             random() * (radiusMax + radiusMin) - radiusMin};
-        double[] result = multiplyMatrixVector(
-            ROTATIONS_0_90_180_270[(int) (random() * 3)],
+        return multiplyMatrixVector(
+            ROTATIONS_0_90_180_270[(int) (random() * 4)],
             randPairAtSize);
-        return new int[]{
-            (int) result[0],
-            (int) result[1]};
     }
 
 
@@ -71,7 +78,7 @@ public class RandomCords {
      *                  using {@code 0} and {@code 1} respectively.
      * @return A pair of numbers, each randomly generated, that satisfy the above conditions.
      */
-    public static int[] getRandXySquare(int radiusMax, int radiusMin, double gShrink, double gCenter) {
+    public static double[] getRandXySquare(int radiusMax, int radiusMin, double gShrink, double gCenter) {
         double s0 = (double) radiusMin / (double) radiusMax;
         double s1 = 1 - s0;
         double r0 = random();
@@ -82,9 +89,9 @@ public class RandomCords {
             s0 * r0 + r0 * r1 * s1};
         if (random() * 2 > 1) xy[1] *= -1;
         xy = multiplyMatrixVector(ROTATIONS_0_90_180_270[(int) (random() * 4)], xy);
-        return new int[]{
-            (int) (xy[0] * radiusMax),
-            (int) (xy[1] * radiusMax)};
+        xy[0] *= radiusMax;
+        xy[1] *= radiusMax;
+        return xy;
     }
 
 
@@ -98,7 +105,7 @@ public class RandomCords {
      * @param radiusMin The minimum distance from the center of the circle that a point can be.
      * @return A pair of numbers representing a random point inside the specific area in the circle.
      */
-    public static int[] getRandXyCircle(int radiusMax, int radiusMin) {
+    public static double[] getRandXyCircle(int radiusMax, int radiusMin) {
         return getRandXyCircle(radiusMax, radiusMin, 0, 0);
     }
 
@@ -120,13 +127,13 @@ public class RandomCords {
      *                  using {@code 0} and {@code 1} respectively.
      * @return A pair of numbers representing a random point inside the specific area in the circle.
      */
-    public static int[] getRandXyCircle(int radiusMax, int radiusMin, double gShrink, double gCenter) {
+    public static double[] getRandXyCircle(int radiusMax, int radiusMin, double gShrink, double gCenter) {
         double rMin2 = pow(radiusMin, 2d);
         double r = sqrt((gShrink == 0 ? random() : randomG(gShrink, gCenter)) * (pow(radiusMax, 2d) - rMin2) + rMin2);
         double theta = 2d * PI * random();
-        int x = (int) (r * cos(theta));
-        int y = (int) (r * sin(theta));
-        return new int[]{x, y};
+        double x = (int) (r * cos(theta));
+        double y = (int) (r * sin(theta));
+        return new double[]{x, y};
     }
 
 //    public static int[] weirdCircle(double radiusMax, double radiusMin) {
