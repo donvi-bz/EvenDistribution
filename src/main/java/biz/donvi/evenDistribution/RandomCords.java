@@ -1,13 +1,10 @@
 package biz.donvi.evenDistribution;
 
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
-import static biz.donvi.evenDistribution.TransitionMatrices.*;
+import static biz.donvi.evenDistribution.TransitionMatrices.ROTATIONS_0_90_180_270;
+import static biz.donvi.evenDistribution.TransitionMatrices.multiplyMatrixVector;
 import static java.lang.Math.*;
 
 public class RandomCords {
@@ -44,14 +41,14 @@ public class RandomCords {
      */
     public static int[] getRandXySquare(int radiusMax, int radiusMin) {
         double[] randPairAtSize = new double[]{
-                random() * (radiusMax - radiusMin) + radiusMin,
-                random() * (radiusMax + radiusMin) - radiusMin};
+            random() * (radiusMax - radiusMin) + radiusMin,
+            random() * (radiusMax + radiusMin) - radiusMin};
         double[] result = multiplyMatrixVector(
-                ROTATIONS_0_90_180_270[(int) (random() * 3)],
-                randPairAtSize);
+            ROTATIONS_0_90_180_270[(int) (random() * 3)],
+            randPairAtSize);
         return new int[]{
-                (int) result[0],
-                (int) result[1]};
+            (int) result[0],
+            (int) result[1]};
     }
 
 
@@ -72,7 +69,7 @@ public class RandomCords {
      *                  It will make the cluster of points more dense around the center radius.
      * @param gCenter   Where to center the points between {@code radiusMin} and {@code radiusMax},
      *                  using {@code 0} and {@code 1} respectively.
-     * @return
+     * @return A pair of numbers, each randomly generated, that satisfy the above conditions.
      */
     public static int[] getRandXySquare(int radiusMax, int radiusMin, double gShrink, double gCenter) {
         double s0 = (double) radiusMin / (double) radiusMax;
@@ -81,13 +78,13 @@ public class RandomCords {
         double r1 = randomG(gShrink, gCenter);
         r1 = r1 * s0 + sqrt(r1) * s1; //This is not a perfect solution
         double[] xy = {
-                s0 + s1 * r1,
-                s0 * r0 + r0 * r1 * s1};
+            s0 + s1 * r1,
+            s0 * r0 + r0 * r1 * s1};
         if (random() * 2 > 1) xy[1] *= -1;
         xy = multiplyMatrixVector(ROTATIONS_0_90_180_270[(int) (random() * 4)], xy);
         return new int[]{
-                (int) (xy[0] * radiusMax),
-                (int) (xy[1] * radiusMax)};
+            (int) (xy[0] * radiusMax),
+            (int) (xy[1] * radiusMax)};
     }
 
 
@@ -130,59 +127,6 @@ public class RandomCords {
         int x = (int) (r * cos(theta));
         int y = (int) (r * sin(theta));
         return new int[]{x, y};
-    }
-
-    public static int[] mer(double minRange, double maxRange) {
-        final int dx = r.nextBoolean() ? 1 : -1, dz = r.nextBoolean() ? 1 : -1;
-        final boolean edge = r.nextBoolean();
-        return new int[]{
-                (int) (dx * ((edge ? minRange : 0) + r.nextDouble() * (maxRange - (edge ? 0 : minRange)))),
-                (int) (dz * ((edge ? 0 : minRange) + r.nextDouble() * (maxRange - (edge ? minRange : 0))))
-        };
-    }
-
-    public static int[] essentialsRtp(double maxRange, double minRange) {
-        final int dx = r.nextBoolean() ? 1 : -1, dz = r.nextBoolean() ? 1 : -1;
-        return new int[]{
-                (int) (dx * (minRange + r.nextDouble() * (maxRange - minRange))),
-                (int) (dz * (minRange + r.nextDouble() * (maxRange - minRange)))
-        };
-    }
-
-
-    public static double[] essentials2(double maxRange, double minRange) {
-        double[] randPairAtSize = new double[]{
-                r.nextDouble() * (maxRange - minRange) + minRange,
-                r.nextDouble() * (maxRange + minRange) - minRange};
-
-        switch ((int) (random() * 4)) {
-            case 0:
-                return randPairAtSize;
-            case 1:
-                return new double[]{-randPairAtSize[1], randPairAtSize[0]};
-            case 2:
-                return new double[]{-randPairAtSize[0], -randPairAtSize[1]};
-            case 3:
-                return new double[]{randPairAtSize[1], -randPairAtSize[0]};
-        }
-        //This line will never be reached
-        return new double[]{0, 0};
-    }
-
-    public static int[] essentials2int(double maxRange, double minRange) {
-        double[] temp = essentials2(maxRange, minRange);
-        return new int[]{
-                (int) temp[0],
-                (int) temp[1]
-        };
-    }
-
-    public static int[] iGotToStopMakingMore(double radiusMax, double radiusMin){
-        double scale = (radiusMax / radiusMin) * random();
-        return new int[]{
-                (int) (radiusMin * 1 * scale),
-                (int) (radiusMin * random() * scale)
-        };
     }
 
 //    public static int[] weirdCircle(double radiusMax, double radiusMin) {
