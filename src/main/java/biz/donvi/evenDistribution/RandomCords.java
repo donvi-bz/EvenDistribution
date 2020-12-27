@@ -28,11 +28,12 @@ public class RandomCords {
     }
 
     /**
-     * Turns a double array of length 2 into an int array of length 2.
+     * Turns a double array of length 2 into an int array of length 2. (The 2w stands for 2 wide)
+     *
      * @param cordPair A pair of doubles (in an array)
      * @return A pair of ints (in an array)
      */
-    static int[] as2wIntArray(double[] cordPair) {
+    static int[] asIntArray2w(double[] cordPair) {
         return new int[]{
             (int) cordPair[0],
             (int) cordPair[1]};
@@ -56,6 +57,55 @@ public class RandomCords {
         return multiplyMatrixVector(
             ROTATIONS_0_90_180_270[(int) (random() * 4)],
             randPairAtSize);
+    }
+
+    public static double[] getRandXyRectangle(double rx, double ry) {
+        return new double[]{
+            random() * rx * 2 - rx,
+            random() * ry * 2 - ry};
+    }
+
+    public static double[] getRandXyRectangle(double rx, double ry, double hrx, double hry, double hcx, double hcy) {
+        double
+            xb = hcx - hrx, xt = hcx + hrx,
+            yb = hcy - hry, yt = hcy + hry,
+            s0l = rx - xt, s0h = ry - yb,
+            s1l = xt + rx, s1h = ry - yt,
+            s2l = xb + rx, s2h = yt + ry,
+            s3l = rx - xb, s3h = yb + ry;
+        double[] res = {random(), random()};
+        switch (weightedChoice(s0l * s0h, s1l * s1h, s2l * s2h, s3l * s3h)) {
+            case 0:
+                res[0] = res[0] * s0l + xt;
+                res[1] = res[1] * s0h + yb;
+                break;
+            case 1:
+                res[0] = res[0] * s1l - rx;
+                res[1] = res[1] * s1h + yt;
+                break;
+            case 2:
+                res[0] = res[0] * s2l - rx;
+                res[1] = res[1] * s2h - ry;
+                break;
+            case 3:
+                res[0] = res[0] * s3l + xb;
+                res[1] = res[1] * s3h - ry;
+                break;
+            default: // Should never be called
+                return new double[]{0, 0};
+        }
+        return res;
+    }
+
+    private static int weightedChoice(double... options) {
+        double sum = 0;
+        for (double option : options) sum += option;
+        double randVal = random();
+        randVal *= sum;
+        for (int i = 0; i < options.length; i++)
+            if (randVal < options[i]) return i;
+            else randVal -= options[i];
+        return -1;
     }
 
 
